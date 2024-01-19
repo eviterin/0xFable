@@ -36,22 +36,22 @@ const initialTypeMap = Object.assign({}, ...types.map(name => ({[name]: false}))
 const Collection: FablePage = ({ decks, setDecks, isHydrated }) => {
 
   const { address } = useAccount();
-  const [ isDeckEditorActive, setIsDeckEditorActive ] = useState(false);
-
+  const [ isEditing, setIsEditing ] = useState(false); 
+  
   // Filter Panel / Sorting Panel
   const [ searchInput, setSearchInput ] = useState('');
   const [ effectMap, setEffectMap ] = useState(initialEffectMap);
   const [ typeMap, setTypeMap ] = useState(initialTypeMap);
   const [ selectedCard, setSelectedCard ] = useState<Card|null>(null);
-
+  
   // Deck Collection Display
-  const [ userDecks, setUserDecks ] = useState<Deck[]>([]);
-  const [ editingDeckIndex, setEditingDeckIndex ] = useState(null);
-
+  const [ userDecks, setUserDecks  ] = useState<Deck[]>([]);
+  const [ editingDeckIndex, setEditingDeckIndex ] = useState(null); 
+  
   // Deck Construction Panel
   const [ currentDeck, setCurrentDeck] = useState({ name: '', cards: [] });
-  const [ selectedDeckEditorCards, setSelectedDeckEditorCards ] = useState<Card[]>([]);
-
+  const [ selectedCards, setSelectedCards ] = useState<Card[]>([]); 
+  
   const cardName = selectedCard?.lore.name || "Select a card"
   const cardFlavor = selectedCard?.lore.flavor || "Select a card to see its details"
 
@@ -96,7 +96,7 @@ const Collection: FablePage = ({ decks, setDecks, isHydrated }) => {
   const handleNewDeck = () => {
     setCurrentDeck({ name: 'New Deck', cards: [] });
     setIsEditing(true);
-    setOriginalDeckIndex(null);
+    setEditingDeckIndex(null);
   };
 
   const handleDeckChange = (updatedDeck) => {
@@ -106,16 +106,16 @@ const Collection: FablePage = ({ decks, setDecks, isHydrated }) => {
   const handleDeckSelect = (deckID) => {
     const selectedDeck = decks[deckID];
     setCurrentDeck(selectedDeck);
-    setOriginalDeckIndex(deckID);
+    setEditingDeckIndex(deckID);
     setIsEditing(true);
     setSelectedCards(selectedDeck.cards);
   };
 
   const handleSaveDeck = (updatedDeck) => {
     let updatedDecks = [...decks];
-    if (originalDeckIndex !== null) {
+    if (editingDeckIndex !== null) {
       // Update the existing deck at the original index
-      updatedDecks[originalDeckIndex] = updatedDeck;
+      updatedDecks[editingDeckIndex] = updatedDeck;
     } else {
       // Add the new deck to the list
       updatedDecks.push(updatedDeck);
@@ -172,7 +172,7 @@ const Collection: FablePage = ({ decks, setDecks, isHydrated }) => {
     if (router.query.newDeck) {
       setCurrentDeck({ name: '', cards: [] })
       setIsEditing(true)
-      setOriginalDeckIndex(null)
+      setEditingDeckIndex(null)
     }
   }, [router.query.newDeck])
 

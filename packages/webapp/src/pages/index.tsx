@@ -1,5 +1,4 @@
 import { ConnectKitButton, useModal } from "connectkit"
-import Link from "next/link"
 import { useAccount, useNetwork } from "wagmi"
 
 import { Address, chains } from "src/chain"
@@ -10,7 +9,11 @@ import { MintDeckModal } from "src/components/modals/mintDeckModal"
 import { useGameInGame } from "src/generated"
 import { FablePage } from "src/pages/_app"
 import { useGameID } from "src/store/hooks"
+<<<<<<< HEAD
 import { Button } from "src/components/ui/button"
+=======
+import QueryParamLink from "src/components/queryParamList"
+>>>>>>> 4d68b23 (Component wrapping 'Link' added to carry the '?index=' parameter used for testing.)
 
 const Home: FablePage = ({ isHydrated }) => {
   const { address } = useAccount()
@@ -59,9 +62,9 @@ const Home: FablePage = ({ isHydrated }) => {
             <CreateGameModal />
             <JoinGameModal />
             <MintDeckModal />
-            <Link className="hover:border-3 btn-lg btn btn-neutral border-2 border-green-900 text-2xl normal-case hover:scale-105 hover:border-green-800" href={"/collection"}>
+            <QueryParamLink className="hover:border-3 btn-lg btn btn-neutral border-2 border-green-900 text-2xl normal-case hover:scale-105 hover:border-green-800" href={"/collection"}>
               Collection →
-            </Link>
+            </QueryParamLink>
           </div>  
           <ConnectKitButton />
         </>}

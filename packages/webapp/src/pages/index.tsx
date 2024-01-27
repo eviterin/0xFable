@@ -10,10 +10,14 @@ import { useGameInGame } from "src/generated"
 import { FablePage } from "src/pages/_app"
 import { useGameID } from "src/store/hooks"
 <<<<<<< HEAD
+<<<<<<< HEAD
 import { Button } from "src/components/ui/button"
 =======
 import QueryParamLink from "src/components/queryParamList"
 >>>>>>> 4d68b23 (Component wrapping 'Link' added to carry the '?index=' parameter used for testing.)
+=======
+import Link from "src/components/link"
+>>>>>>> f675cc0 (renamed queryParamLink to just link.)
 
 const Home: FablePage = ({ isHydrated }) => {
   const { address } = useAccount()
@@ -62,9 +66,9 @@ const Home: FablePage = ({ isHydrated }) => {
             <CreateGameModal />
             <JoinGameModal />
             <MintDeckModal />
-            <QueryParamLink className="hover:border-3 btn-lg btn btn-neutral border-2 border-green-900 text-2xl normal-case hover:scale-105 hover:border-green-800" href={"/collection"}>
+            <Link className="hover:border-3 btn-lg btn btn-neutral border-2 border-green-900 text-2xl normal-case hover:scale-105 hover:border-green-800" href={"/collection"}>
               Collection →
-            </QueryParamLink>
+            </Link>
           </div>  
           <ConnectKitButton />
         </>}

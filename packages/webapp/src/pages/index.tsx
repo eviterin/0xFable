@@ -9,7 +9,7 @@ import { MintDeckModal } from "src/components/modals/mintDeckModal"
 import { useGameInGame } from "src/generated"
 import { FablePage } from "src/pages/_app"
 import { useGameID } from "src/store/hooks"
-import QueryParamLink from "src/components/queryParamList"
+import Link from "src/components/link"
 
 const Home: FablePage = ({ isHydrated }) => {
   const { address } = useAccount()
@@ -61,9 +61,9 @@ const Home: FablePage = ({ isHydrated }) => {
             <CreateGameModal />
             <JoinGameModal />
             <MintDeckModal />
-            <QueryParamLink className="hover:border-3 btn-lg btn btn-neutral border-2 border-green-900 text-2xl normal-case hover:scale-105 hover:border-green-800" href={"/collection"}>
+            <Link className="hover:border-3 btn-lg btn btn-neutral border-2 border-green-900 text-2xl normal-case hover:scale-105 hover:border-green-800" href={"/collection"}>
               Collection →
-            </QueryParamLink>
+            </Link>
           </div>  
           <ConnectKitButton />
         </>}

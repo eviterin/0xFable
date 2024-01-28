@@ -27,7 +27,13 @@ const initialEffectMap = Object.assign({}, ...effects.map(name => ({[name]: fals
 const types = ['Creature', 'Magic', 'Weapon']
 const initialTypeMap = Object.assign({}, ...types.map(name => ({[name]: false})))
 
-const Collection: FablePage = ({ decks, setDecks, isHydrated }) => {
+interface CollectionSpecificProps {
+  decks: Deck[]
+  setDecks: (decks: Deck[]) => void;
+}
+type CollectionProps = FablePage & CollectionSpecificProps
+
+const Collection: React.FC<CollectionProps> = ({ decks, setDecks, isHydrated }) => {
   const router = useRouter()
   const { address } = useAccount()
   const [ isEditing, setIsEditing ] = useState(false) 

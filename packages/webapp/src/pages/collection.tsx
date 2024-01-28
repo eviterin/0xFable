@@ -44,7 +44,7 @@ const Collection: FablePage = ({ isHydrated }) => {
   const [ editingDeckIndex, setEditingDeckIndex ] = useState(null) 
   
   // Deck Construction Panel
-  const [ currentDeck, setCurrentDeck] = useState({ name: '', cards: [] })
+  const [ currentDeck, setCurrentDeck] = useState<Deck|null>(null)
   const [ selectedCards, setSelectedCards ] = useState<Card[]>([]) 
   
   const activeEffects = Object.keys(effectMap).filter(key => effectMap[key])

@@ -11,7 +11,7 @@ import { useInventoryCardsCollectionGetCollection } from "src/generated"
 import { Card } from "src/store/types"
 import { Address } from "src/chain"
 import { FablePage } from "src/pages/_app"
-import { router } from 'next/router'
+import { useRouter } from 'next/router'
 
 import FilterPanel from 'src/components/collection/filterPanel'
 import CardCollectionDisplay from 'src/components/collection/cardCollectionDisplay'
@@ -28,7 +28,7 @@ const types = ['Creature', 'Magic', 'Weapon']
 const initialTypeMap = Object.assign({}, ...types.map(name => ({[name]: false})))
 
 const Collection: FablePage = ({ decks, setDecks, isHydrated }) => {
-
+  const router = useRouter()
   const { address } = useAccount()
   const [ isEditing, setIsEditing ] = useState(false) 
   
@@ -153,7 +153,7 @@ const Collection: FablePage = ({ decks, setDecks, isHydrated }) => {
     return () => {
       router.events.off('routeChangeComplete', handleRouteChange)
     }
-  }, []) 
+  }, [router.events, router.query.newDeck]) 
   
   return (
     <>

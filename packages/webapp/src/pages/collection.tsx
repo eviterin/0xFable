@@ -8,7 +8,7 @@ import jotaiDebug from "src/components/lib/jotaiDebug"
 import { Navbar } from "src/components/navbar"
 import { deployment } from "src/deployment"
 import { useInventoryCardsCollectionGetCollection } from "src/generated"
-import { Card } from "src/store/types"
+import { Deck, Card } from "src/store/types"
 import { Address } from "src/chain"
 import { FablePage } from "src/pages/_app"
 import { useRouter } from 'next/router'
@@ -27,16 +27,12 @@ const initialEffectMap = Object.assign({}, ...effects.map(name => ({[name]: fals
 const types = ['Creature', 'Magic', 'Weapon']
 const initialTypeMap = Object.assign({}, ...types.map(name => ({[name]: false})))
 
-interface CollectionSpecificProps {
-  decks: Deck[]
-  setDecks: (decks: Deck[]) => void;
-}
-type CollectionProps = FablePage & CollectionSpecificProps
-
-const Collection: React.FC<CollectionProps> = ({ decks, setDecks, isHydrated }) => {
+const Collection: FablePage = ({ isHydrated }) => {
   const router = useRouter()
   const { address } = useAccount()
   const [ isEditing, setIsEditing ] = useState(false) 
+  // todo @eviterin: to be removed when these decks are put onchain with https://github.com/0xFableOrg/0xFable/issues/103
+  const [decks, setDecks] = useState<Deck[]>([])
   
   // Filter Panel / Sorting Panel
   const [ searchInput, setSearchInput ] = useState('')
@@ -88,7 +84,7 @@ const Collection: React.FC<CollectionProps> = ({ decks, setDecks, isHydrated }) 
     setTypeMap({...typeMap, [type]: !typeMap[type]})
   }
 
-  const handleDeckSelect = (deckID) => {
+  const handleDeckSelect = (deckID: number) => {
     const selectedDeck = decks[deckID]
     setCurrentDeck(selectedDeck)
     setEditingDeckIndex(deckID)

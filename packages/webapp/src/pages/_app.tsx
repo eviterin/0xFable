@@ -9,7 +9,6 @@ import { NextPage } from "next"
 import type { AppType } from "next/app"
 import Head from "next/head"
 import { useAccount, WagmiConfig } from "wagmi"
-import { useState } from "react"
 import { ensureLocalAccountIndex, wagmiConfig } from "src/chain"
 import jotaiDebug from "src/components/lib/jotaiDebug"
 import { GlobalErrorModal } from "src/components/modals/globalErrorModal"
@@ -19,7 +18,6 @@ import { useErrorConfig } from "src/store/hooks"
 import "src/styles/globals.css"
 import { useRouter } from "next/router"
 import { ComponentType, useEffect } from "react"
-import { Deck } from "src/store/types"
 
 // =================================================================================================
 

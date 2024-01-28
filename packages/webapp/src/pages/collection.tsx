@@ -41,7 +41,7 @@ const Collection: FablePage = ({ isHydrated }) => {
   const [ selectedCard, setSelectedCard ] = useState<Card|null>(null)
   
   // Deck Collection Display
-  const [ editingDeckIndex, setEditingDeckIndex ] = useState(null) 
+  const [ editingDeckIndex, setEditingDeckIndex ] = useState<number|null>(null)
   
   // Deck Construction Panel
   const [ currentDeck, setCurrentDeck] = useState<Deck|null>(null)
@@ -92,7 +92,7 @@ const Collection: FablePage = ({ isHydrated }) => {
     setSelectedCards(selectedDeck.cards)
   }
 
-  const handleSaveDeck = (updatedDeck) => {
+  const handleSaveDeck = (updatedDeck: Deck) => {
     const updatedDecks = [...decks]
     if (editingDeckIndex !== null) {
       // Update existing deck
@@ -194,7 +194,7 @@ const Collection: FablePage = ({ isHydrated }) => {
 
           {/* Right Panel - Deck List */}
           <div className="flex col-span-2 rounded-xl border overflow-y-auto">
-            {isEditing ? (
+            {isEditing && currentDeck ? (
               <DeckPanel
                 deck={currentDeck}
                 selectedCards={selectedCards}

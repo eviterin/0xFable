@@ -19,6 +19,10 @@ import CardCollectionDisplay from 'src/components/collection/cardCollectionDispl
 import DeckList from 'src/components/collection/deckList'
 import DeckPanel from 'src/components/collection/deckPanel'
 
+import * as store from "src/store/hooks"
+import { save, modify } from "src/actions/setDeck"
+import { getDeck, getNumDecks, getAllDeckNamesAndIds, getAllDecks } from "src/actions/getDeck"
+import { LoadingModalContent } from "src/components/lib/loadingModal"
 
 // NOTE(norswap & geniusgarlic): Just an example, when the game actually has effects & types,
 //   fetch those from the chain instead of hardcoding them here.
@@ -44,6 +48,7 @@ const Collection: FablePage = ({ isHydrated }) => {
   
   // Deck Collection Display
   const [ editingDeckIndex, setEditingDeckIndex ] = useState<number|null>(null)
+  const [ isLoadingDecks, setIsLoadingDecks ] = useState(false)
   
   // Deck Construction Panel
   const [ currentDeck, setCurrentDeck] = useState<Deck|null>(null)
@@ -51,6 +56,8 @@ const Collection: FablePage = ({ isHydrated }) => {
   
   const activeEffects = Object.keys(effectMap).filter(key => effectMap[key])
   const activeTypes = Object.keys(typeMap).filter(key => typeMap[key])
+
+  const playerAddress = store.usePlayerAddress()
 
   const { data: unfilteredCards } = useInventoryCardsCollectionGetCollection({
     address: deployment.InventoryCardsCollection,
@@ -86,33 +93,69 @@ const Collection: FablePage = ({ isHydrated }) => {
     setTypeMap({...typeMap, [type]: !typeMap[type]})
   }
 
+
   const handleDeckSelect = (deckID: number) => {
     const selectedDeck = decks[deckID]
     setCurrentDeck(selectedDeck)
     setEditingDeckIndex(deckID)
     setIsEditing(true)
-    setSelectedCards(selectedDeck.cards)
+    console.log(selectedDeck)
+
+    const cardObjects = selectedDeck.cards.map(idString => {
+      const idBigInt = BigInt(idString); // Convert string to bigint
+      return cards.find(card => card.id === idBigInt); // Find the card by ID
+    })
+
+    setSelectedCards(cardObjects)
   }
 
   const handleSaveDeck = (updatedDeck: Deck) => {
     const updatedDecks = [...decks]
+    console.log("efaj")
+    console.log(updatedDeck)
     if (editingDeckIndex !== null) {
       // Update existing deck
       updatedDecks[editingDeckIndex] = updatedDeck
+      modifyOnchain(updatedDeck, editingDeckIndex)
     } else {
       // Add the new deck to the list
+      saveOnchain(updatedDeck)
       updatedDecks.push(updatedDeck)
     }
-  
+
     setDecks(updatedDecks)
     setIsEditing(false)
     setSelectedCards([])
+    
     navigate(router, '/collection')
   }
 
+  function modifyOnchain(deck: Deck, index: number){
+    modify({
+      playerAddress: playerAddress!,
+      index,
+      deck,
+      setLoading,
+      onSuccess: () => { 
+        console.log("Deck modified!")
+      }
+    })
+  }
+  
+  function saveOnchain(deck: Deck){
+    save({
+      deck,
+      playerAddress: playerAddress!,
+      setLoading,
+      onSuccess: () => { 
+        console.log("Deck Saved!")
+      }
+    })
+  }
+  
   const handleCancelEditing = () => {
     setIsEditing(false)
-    setSelectedCards([]) 
+    setSelectedCards([])
     navigate(router, '/collection')
   }
 
@@ -129,6 +172,7 @@ const Collection: FablePage = ({ isHydrated }) => {
   }
 
   const onCardToggle = (card: Card) => {
+    //card = testCards[card.id]
     setSelectedCards((prevSelectedCards) => {
         if (prevSelectedCards.some(selectedCard => selectedCard.id === card.id)) {
             // Remove the card if it's already selected
@@ -139,7 +183,6 @@ const Collection: FablePage = ({ isHydrated }) => {
         }
     })
   }
-
 
   // Sets up an event listener for route changes when deck editor is rendered.
   useEffect(() => {
@@ -158,7 +201,89 @@ const Collection: FablePage = ({ isHydrated }) => {
       router.events.off('routeChangeComplete', handleRouteChange)
     }
   }, [router.events, router.query.newDeck]) 
+
   
+  // FETCH CARDS OF DECK BY INDEX
+  /*
+  useEffect(() => {
+    if (playerAddress) {
+      getDeck({
+        index: 2,
+        playerAddress: playerAddress,
+        setLoading,
+        onSuccess: () => {
+          console.log("Deck retrieval successful")
+        }
+      }).then(deckData => {
+        console.log("Received deck:", deckData)
+      })
+    }
+  }, [playerAddress, setLoading])
+  */
+
+  // FETCH COUNT OF DECKS
+  /*
+  useEffect(() => {
+    if (playerAddress) {
+      getNumDecks({
+        playerAddress: playerAddress,
+        setLoading,
+        onSuccess: () => {
+          console.log("Deck count retrieval successful")
+        }
+      }).then(count => {
+        console.log("Received count:", count)
+      })
+    }
+  }, [playerAddress, setLoading])
+  */
+
+  // FETCH ALL DECK NAMES AND THEIR RESPECTIVE IDS
+  /*
+  useEffect(() => {
+    if (playerAddress) {
+      getAllDeckNamesAndIds({
+        playerAddress: playerAddress,
+        setLoading,
+        onSuccess: () => {
+          console.log("Deck stuff successful")
+        }
+      }).then(deckData => {
+        console.log("Received:", deckData)
+      })
+    }
+  }, [playerAddress, setLoading])
+  */
+
+  // FETCH ALL DECKS
+  const [ loading, setLoading ] = useState<string|null>(null)
+  useEffect(() => {
+    
+    if (playerAddress) {
+      setIsLoadingDecks(true)
+      getAllDecks({
+        playerAddress: playerAddress,
+        setLoading,
+        onSuccess: () => {
+          console.log("Deck stuff successful")
+        },
+      }).then(response => {
+        console.log("Received:", response)
+
+        const deckData = response.simulatedResult.map(deck => ({
+          name: deck.name,
+          cards: deck.cards.map(card => card.toString()) 
+        }))
+  
+        setDecks(deckData);
+      }).catch(error => {
+        console.error("Error fetching decks:", error)
+      }).finally(() => {
+        setIsLoadingDecks(false)
+      })
+    }
+  }, [playerAddress, setLoading])
+
   return (
     <>
       <Head>
@@ -208,6 +333,7 @@ const Collection: FablePage = ({ isHydrated }) => {
               <DeckList 
                 decks={decks} 
                 onDeckSelect={handleDeckSelect}
+                isLoadingDecks={isLoadingDecks}
               />
             )}
           </div>

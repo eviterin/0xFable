@@ -67,7 +67,10 @@ interface DeckConstructionPanelProps {
           <div 
             key={index} 
             className="p-2 border-b last:border-b-0 cursor-pointer hover:bg-gray-100"
-            onClick={() => onCardSelect(card)}
+            onClick={() => {
+              console.log(card)
+              onCardSelect(card)
+            }}
           >
             <div className="flex items-center space-x-3">
               {/* todo @eviterin: get proper link to the card instead of always the witch */}

@@ -32,6 +32,8 @@ const CardCollectionDisplay: React.FC<CardCollectionDisplayProps> = ({ cards, is
                 } hover:bg-slate-800 rounded-lg p-4 border-4 border-slate-900 grow w-[220px] max-w-[330px]`}
                 onMouseEnter={() => setSelectedCard(card)}
                 onClick={() => {
+                  //console.log("clicked: ")
+                  //console.log(card)
                   if (isEditing) {
                     onCardToggle(card) // Only toggle card selection when in editing mode
                   }

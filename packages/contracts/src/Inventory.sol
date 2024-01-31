@@ -53,6 +53,8 @@ contract Inventory is Ownable {
 
     event DeckRemoved(address indexed player, uint8 indexed deckID);
 
+    event DeckModified(address indexed player, uint8 indexed deckID);
+
     event CardAddedToDeck(uint8 indexed deckID, uint256 indexed cardID);
 
     event CardRemovedFromDeck(uint8 indexed deckID, uint256 indexed cardID);
@@ -78,6 +80,7 @@ contract Inventory is Ownable {
     // We need a struct because Solidity is unable to copy an array from memory to storage
     // directly, but can do it when the array is embedded in a struct.
     struct Deck {
+        string name;
         uint256[] cards;
     }
 
@@ -220,6 +223,20 @@ contract Inventory is Ownable {
         emit DeckAdded(player, deckID);
     }
 
+
+    // Modifies an existing deck with the given cards for the sender.
+    // Assumes the deck ID already exists for the player.
+    function modifyDeck(address player, uint8 deckID, Deck calldata newDeck) external delegated(player) {
+        if (deckID >= decks[player].length) {
+            revert DeckDoesNotExist(player, deckID);
+        }
+        decks[player][deckID] = newDeck;
+
+        // Reused to enforce deck size
+        _addDeck(player, deckID, newDeck);
+        emit DeckModified(player, deckID);
+    }
+
     // ---------------------------------------------------------------------------------------------
 
     // Remove the given deck for the sender, leaving the deck at the given ID empty.
@@ -337,6 +354,52 @@ contract Inventory is Ownable {
         return decks[player][deckID].cards;
     }
 
+    // todo @eviterin: refactor getDeck to getCards
+    //deck at deckID of player
+    function getDeckReal(address player, uint8 deckID)
+        external
+        view
+        exists(player, deckID)
+        returns (Deck memory deck)
+    {
+        return decks[player][deckID];
+    }
+
+    //name of specific deckid of player
+    function getDeckName(address player, uint8 deckID)
+        external
+        view
+        exists(player, deckID)
+        returns (string memory deckName)
+    {
+        return decks[player][deckID].name;
+    }
+
+    //all deck names & ids of player
+    function getAllDeckNamesAndIds(address player) 
+        external 
+        view 
+        returns (string[] memory deckNames, uint8[] memory deckIDs) 
+    {
+        uint8 deckCount = uint8(decks[player].length);
+        deckNames = new string[](deckCount);
+        deckIDs = new uint8[](deckCount);
+
+        for (uint8 i = 0; i < deckCount; i++) {
+            deckNames[i] = decks[player][i].name;
+            deckIDs[i] = i;
+        }
+        return (deckNames, deckIDs);
+    }
+
+    //all decks of player
+    function getAllDecks(address player) 
+        external 
+        view 
+        returns (Deck[] memory) 
+    {
+        return decks[player];
+    }
     // ---------------------------------------------------------------------------------------------
 
     // Returns the number of deck a player has created.

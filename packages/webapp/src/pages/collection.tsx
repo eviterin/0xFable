@@ -202,7 +202,6 @@ const Collection: FablePage = ({ isHydrated }) => {
       setIsLoadingDecks(true)
       getAllDecks({
         playerAddress: playerAddress,
-        setLoading,
         onSuccess: () => {
           
         },

@@ -47,8 +47,8 @@ const Collection: FablePage = ({ isHydrated }) => {
   
   // Deck Collection Display
   const [ editingDeckIndex, setEditingDeckIndex ] = useState<number|null>(null)
-  const [ isLoadingDecks, setIsLoadingDecks ] = useState(false)
-  const [ loading, setLoading ] = useState<string|null>(null)
+  const [ isLoadingDecks, setIsLoadingDecks ] = useState(false) // Used to indicate that decks are being loaded from chain
+  const [ loading, setLoading ] = useState<string|null>(null) 
   
   // Deck Construction Panel
   const [ currentDeck, setCurrentDeck] = useState<Deck|null>(null)
@@ -214,7 +214,7 @@ const Collection: FablePage = ({ isHydrated }) => {
         setIsLoadingDecks(false)
       })
     }
-  }, [playerAddress, setLoading])
+  }, [playerAddress, setIsLoadingDecks])
   
   return (
     <>
@@ -265,6 +265,7 @@ const Collection: FablePage = ({ isHydrated }) => {
               <DeckList 
                 decks={decks} 
                 onDeckSelect={handleDeckSelect}
+                isLoadingDecks={isLoadingDecks}
               />
             )}
           </div>

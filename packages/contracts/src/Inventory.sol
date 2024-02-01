@@ -51,6 +51,8 @@ contract Inventory is Ownable {
 
     event DeckAdded(address indexed player, uint8 deckID);
 
+    event DeckModified(address indexed player, uint8 indexed deckID);
+
     event DeckRemoved(address indexed player, uint8 indexed deckID);
 
     event CardAddedToDeck(uint8 indexed deckID, uint256 indexed cardID);
@@ -219,6 +221,21 @@ contract Inventory is Ownable {
         decks[player].push();
         _addDeck(player, deckID, deck);
         emit DeckAdded(player, deckID);
+    }
+
+    // ---------------------------------------------------------------------------------------------
+
+    // Modifies an existing deck with the given cards for the sender.
+    // Assumes the deck ID already exists for the player.
+    function modifyDeck(address player, uint8 deckID, Deck calldata newDeck) external delegated(player) {
+        if (deckID >= decks[player].length) {
+            revert DeckDoesNotExist(player, deckID);
+        }
+        decks[player][deckID] = newDeck;
+
+        // _addDeck used to enforce deck size constraints
+        _addDeck(player, deckID, newDeck);
+        emit DeckModified(player, deckID);
     }
 
     // ---------------------------------------------------------------------------------------------

@@ -150,7 +150,7 @@ const Collection: FablePage = ({ isHydrated }) => {
       deck,
       setLoading,
       onSuccess: () => { 
-        console.log("Deck modified!")
+
       }
     })
   }
@@ -161,7 +161,7 @@ const Collection: FablePage = ({ isHydrated }) => {
       playerAddress: playerAddress!,
       setLoading,
       onSuccess: () => { 
-        console.log("Deck Saved!")
+
       }
     })
   }
@@ -206,10 +206,9 @@ const Collection: FablePage = ({ isHydrated }) => {
         playerAddress: playerAddress,
         setLoading,
         onSuccess: () => {
-          console.log("Deck stuff successful")
+          
         },
       }).then(response => {
-        console.log("Received:", response)
 
         const deckData = response.simulatedResult.map(deck => ({
           name: deck.name,

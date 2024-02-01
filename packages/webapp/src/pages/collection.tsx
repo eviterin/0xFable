@@ -197,9 +197,10 @@ const Collection: FablePage = ({ isHydrated }) => {
   }, [router.events, router.query.newDeck]) 
 
 
+
   useEffect(() => {
 
-    if (playerAddress) {
+    if (playerAddress && isLoadingDecks === false) {
       setIsLoadingDecks(true)
       getAllDecks({
         playerAddress: playerAddress,

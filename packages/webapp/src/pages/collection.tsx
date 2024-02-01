@@ -200,7 +200,7 @@ const Collection: FablePage = ({ isHydrated }) => {
 
   useEffect(() => {
 
-    if (playerAddress && isLoadingDecks === false) {
+    if (playerAddress) {
       setIsLoadingDecks(true)
       getAllDecks({
         playerAddress: playerAddress,

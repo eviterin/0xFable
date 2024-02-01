@@ -19,6 +19,9 @@ import CardCollectionDisplay from 'src/components/collection/cardCollectionDispl
 import DeckList from 'src/components/collection/deckList'
 import DeckPanel from 'src/components/collection/deckPanel'
 
+import * as store from "src/store/hooks"
+import { save, modify } from "src/actions/setDeck"
+import { getAllDecks } from "src/actions/getDeck"
 
 // NOTE(norswap & geniusgarlic): Just an example, when the game actually has effects & types,
 //   fetch those from the chain instead of hardcoding them here.
@@ -33,8 +36,8 @@ const Collection: FablePage = ({ isHydrated }) => {
   const router = useRouter()
   const { address } = useAccount()
   const [ isEditing, setIsEditing ] = useState(false) 
-  // todo @eviterin: to be removed when these decks are put onchain with https://github.com/0xFableOrg/0xFable/issues/103
   const [decks, setDecks] = useState<Deck[]>([])
+  const playerAddress = store.usePlayerAddress()
   
   // Filter Panel / Sorting Panel
   const [ searchInput, setSearchInput ] = useState('')
@@ -44,6 +47,8 @@ const Collection: FablePage = ({ isHydrated }) => {
   
   // Deck Collection Display
   const [ editingDeckIndex, setEditingDeckIndex ] = useState<number|null>(null)
+  const [ isLoadingDecks, setIsLoadingDecks ] = useState(false)
+  const [ loading, setLoading ] = useState<string|null>(null)
   
   // Deck Construction Panel
   const [ currentDeck, setCurrentDeck] = useState<Deck|null>(null)
@@ -98,9 +103,11 @@ const Collection: FablePage = ({ isHydrated }) => {
     const updatedDecks = [...decks]
     if (editingDeckIndex !== null) {
       // Update existing deck
+      modifyOnchain(updatedDeck, editingDeckIndex)
       updatedDecks[editingDeckIndex] = updatedDeck
     } else {
       // Add the new deck to the list
+      saveOnchain(updatedDeck)
       updatedDecks.push(updatedDeck)
     }
   
@@ -128,6 +135,29 @@ const Collection: FablePage = ({ isHydrated }) => {
     })
   }
 
+  function modifyOnchain(deck: Deck, index: number){
+    modify({
+      playerAddress: playerAddress!,
+      index,
+      deck,
+      setLoading,
+      onSuccess: () => { 
+        console.log("Deck modified!")
+      }
+    })
+  }
+
+  function saveOnchain(deck: Deck){
+    save({
+      deck,
+      playerAddress: playerAddress!,
+      setLoading,
+      onSuccess: () => { 
+        console.log("Deck Saved!")
+      }
+    })
+  }
+
   const onCardToggle = (card: Card) => {
     setSelectedCards((prevSelectedCards) => {
         if (prevSelectedCards.some(selectedCard => selectedCard.id === card.id)) {
@@ -139,7 +169,6 @@ const Collection: FablePage = ({ isHydrated }) => {
         }
     })
   }
-
 
   // Sets up an event listener for route changes when deck editor is rendered.
   useEffect(() => {
@@ -158,6 +187,34 @@ const Collection: FablePage = ({ isHydrated }) => {
       router.events.off('routeChangeComplete', handleRouteChange)
     }
   }, [router.events, router.query.newDeck]) 
+
+
+  useEffect(() => {
+
+    if (playerAddress) {
+      setIsLoadingDecks(true)
+      getAllDecks({
+        playerAddress: playerAddress,
+        setLoading,
+        onSuccess: () => {
+          console.log("Deck stuff successful")
+        },
+      }).then(response => {
+        console.log("Received:", response)
+
+        const deckData = response.simulatedResult.map(deck => ({
+          name: deck.name,
+          cards: deck.cards.map(card => card.toString()) 
+        }))
+
+        setDecks(deckData);
+      }).catch(error => {
+        console.error("Error fetching decks:", error)
+      }).finally(() => {
+        setIsLoadingDecks(false)
+      })
+    }
+  }, [playerAddress, setLoading])
   
   return (
     <>

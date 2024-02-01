@@ -3,7 +3,6 @@ import { contractWriteThrowing } from "src/actions/libContractWrite"
 import { Address } from "src/chain"
 import { deployment } from "src/deployment"
 import { inventoryABI } from "src/generated"
-import { checkFresh, freshWrap } from "src/store/checkFresh"
 
 // =================================================================================================
 
@@ -17,7 +16,8 @@ export type getAllDecksArgs = {
 /**
  * Fetches all decks of the given player by sending the `getAllDecks` transaction.
  *
- * Returns `true` iff the transaction is succesful.
+ * Returns `decks` iff the transaction is successful.
+ * Else, returns null.
  */
 export async function getAllDecks(args: getAllDecksArgs): Promise<boolean> {
   try {
@@ -30,19 +30,22 @@ export async function getAllDecks(args: getAllDecksArgs): Promise<boolean> {
 // -------------------------------------------------------------------------------------------------
 
 async function getAllDecksImpl(args: getAllDecksArgs): Promise<any> {
-  const decks = await contractWriteThrowing({
-    contract: deployment.Inventory,
-    abi: inventoryABI,
-    functionName: "getAllDecks",
-    args: [
-      args.playerAddress,
-    ],
-  })
+    try {
+      const decks = await contractWriteThrowing({
+        contract: deployment.Inventory,
+        abi: inventoryABI,
+        functionName: "getAllDecks",
+        args: [args.playerAddress],
+      })
 
-  checkFresh(await freshWrap(decks))
-
-  args.onSuccess()
-  return decks
-}
+      args.onSuccess() 
+      return decks 
+    } catch (error) {
+      console.error("Error fetching decks:", error)
+      return null
+    }
+  }
+  
+  
 
 // =================================================================================================

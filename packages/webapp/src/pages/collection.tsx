@@ -202,6 +202,7 @@ const Collection: FablePage = ({ isHydrated }) => {
         onSuccess: () => {
         },
       }).then(response => {
+        if(!response.simulatedResult) return
 
         const deckData = response.simulatedResult.map(deck => ({
           name: deck.name,

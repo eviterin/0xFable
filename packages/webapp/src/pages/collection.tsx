@@ -91,12 +91,20 @@ const Collection: FablePage = ({ isHydrated }) => {
     setTypeMap({...typeMap, [type]: !typeMap[type]})
   }
 
+  // Called when an owned deck is selected to be viewed
   const handleDeckSelect = (deckID: number) => {
     const selectedDeck = decks[deckID]
     setCurrentDeck(selectedDeck)
     setEditingDeckIndex(deckID)
     setIsEditing(true)
-    setSelectedCards(selectedDeck.cards)
+
+    // Cards from chain are just BigInts. Now they need to be converted to actual cards.
+    const cardObjects = selectedDeck.cards.map(idString => {
+      const idBigInt = BigInt(idString); // Convert string to bigint
+      return cards.find(card => card.id === idBigInt); // Find the card by ID
+    })
+
+    setSelectedCards(cardObjects)
   }
 
   const handleSaveDeck = (updatedDeck: Deck) => {

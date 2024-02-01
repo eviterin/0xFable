@@ -10,7 +10,6 @@ import { checkFresh, freshWrap } from "src/store/checkFresh"
 export type SaveArgs = {
   deck: Deck
   playerAddress: Address
-  setLoading: (label: string | null) => void
   onSuccess: () => void
 }
 
@@ -18,7 +17,6 @@ export type ModifyArgs = {
   deck: Deck
   playerAddress: Address
   index: number
-  setLoading: (label: string | null) => void
   onSuccess: () => void
 }
 
@@ -33,7 +31,6 @@ export async function save(args: SaveArgs): Promise<boolean> {
   try {
     return await saveImpl(args)
   } catch (err) {
-    args.setLoading(null)
     return defaultErrorHandling("save", err)
   }
 }
@@ -47,7 +44,6 @@ export async function modify(args: ModifyArgs): Promise<boolean> {
   try {
     return await modifyImpl(args)
   } catch (err) {
-    args.setLoading(null)
     return defaultErrorHandling("modify", err)
   }
 }
@@ -56,7 +52,7 @@ export async function modify(args: ModifyArgs): Promise<boolean> {
 
 async function saveImpl(args: SaveArgs): Promise<boolean> {
   args.deck.cards = args.deck.cards.map(card => card.id)
-  //console.log(args)
+
   checkFresh(await freshWrap(
     contractWriteThrowing({
       contract: deployment.Inventory,
@@ -66,7 +62,6 @@ async function saveImpl(args: SaveArgs): Promise<boolean> {
         args.playerAddress,
         args.deck
       ],
-      setLoading: args.setLoading
     })))
 
   args.onSuccess()
@@ -75,7 +70,7 @@ async function saveImpl(args: SaveArgs): Promise<boolean> {
 
 async function modifyImpl(args: ModifyArgs): Promise<boolean> {
   args.deck.cards = args.deck.cards.map(card => card.id)
-  //console.log(args)
+
   checkFresh(await freshWrap(
     contractWriteThrowing({
       contract: deployment.Inventory,
@@ -86,7 +81,6 @@ async function modifyImpl(args: ModifyArgs): Promise<boolean> {
         args.index,
         args.deck
       ],
-      setLoading: args.setLoading
     })))
 
   args.onSuccess()

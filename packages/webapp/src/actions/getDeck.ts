@@ -9,7 +9,6 @@ import { checkFresh, freshWrap } from "src/store/checkFresh"
 
 export type getAllDecksArgs = {
   playerAddress: Address
-  setLoading: (label: string | null) => void
   onSuccess: () => void
 }
 
@@ -24,7 +23,6 @@ export async function getAllDecks(args: getAllDecksArgs): Promise<boolean> {
   try {
     return await getAllDecksImpl(args)
   } catch (err) {
-    args.setLoading(null)
     return defaultErrorHandling("getAllDecks", err)
   }
 }
@@ -39,7 +37,6 @@ async function getAllDecksImpl(args: getAllDecksArgs): Promise<any> {
     args: [
       args.playerAddress,
     ],
-    setLoading: args.setLoading
   })
 
   checkFresh(await freshWrap(decks))

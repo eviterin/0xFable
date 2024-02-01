@@ -4,7 +4,6 @@ import { Address } from "src/chain"
 import { deployment } from "src/deployment"
 import { inventoryABI } from "src/generated"
 import { checkFresh, freshWrap } from "src/store/checkFresh"
-import { getOpponentIndex } from "src/store/read"
 
 // =================================================================================================
 
@@ -29,7 +28,6 @@ export async function getAllDecks(args: getAllDecksArgs): Promise<boolean> {
     return defaultErrorHandling("getAllDecks", err)
   }
 }
-
 
 // -------------------------------------------------------------------------------------------------
 

@@ -150,7 +150,6 @@ const Collection: FablePage = ({ isHydrated }) => {
       deck,
       setLoading,
       onSuccess: () => { 
-
       }
     })
   }
@@ -161,7 +160,6 @@ const Collection: FablePage = ({ isHydrated }) => {
       playerAddress: playerAddress!,
       setLoading,
       onSuccess: () => { 
-
       }
     })
   }

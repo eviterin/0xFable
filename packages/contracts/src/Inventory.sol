@@ -219,7 +219,8 @@ contract Inventory is Ownable {
         }
         deckID = uint8(longDeckID);
         decks[player].push();
-        _addDeck(player, deckID, deck);
+        decks[player][deckID] = deck;
+        
         emit DeckAdded(player, deckID);
     }
 
@@ -233,8 +234,6 @@ contract Inventory is Ownable {
         }
         decks[player][deckID] = newDeck;
 
-        // _addDeck used to enforce deck size constraints
-        _addDeck(player, deckID, newDeck);
         emit DeckModified(player, deckID);
     }
 

@@ -12,8 +12,12 @@ interface DeckConstructionPanelProps {
   
   
   const DeckConstructionPanel : React.FC<DeckConstructionPanelProps> = ({ deck, selectedCards = [], onCardSelect, onSave, onCancel }) => {
+    const MAX_CARDS = 10//40
+    const MIN_CARDS = 4//10
+
     const [ deckName, setDeckName ] = useState(deck.name)
     const [ isDeckNameValid, setIsDeckNameValid ] = useState(true)
+    
 
     const handleDeckNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
       const newName = event.target.value
@@ -61,8 +65,25 @@ interface DeckConstructionPanelProps {
         </div>
       </div>
 
+      {/* Counter Row */}
+      <div className="w-full py-1">
+        <div className="relative pt-1">
+          <div className="overflow-hidden h-2 text-xs flex rounded bg-red-200">
+            <div style={{ width: `${(selectedCards.length / MAX_CARDS) * 100}%` }} 
+              className={`shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center ${selectedCards.length < MIN_CARDS ? 'bg-red-500' : selectedCards.length <= MAX_CARDS ? 'bg-green-500' : 'bg-yellow-500'}`}>
+            </div>
+          </div>
+        </div>
+        <div className="text-center text-sm font-medium">
+          {selectedCards.length}/{MAX_CARDS}
+        </div>
+      </div>
+
+
       {/* List of Cards in the Deck */}
       <div className="mt-4 w-full">
+        {/* Separator Line */}
+        <div className="w-full border-t border-gray-200"></div>
         {selectedCards.map((card, index) => (
           <div 
             key={index} 

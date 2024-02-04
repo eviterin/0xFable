@@ -306,12 +306,20 @@ contract Inventory is Ownable {
 
     // ---------------------------------------------------------------------------------------------
 
-    // Checks that the player has all the cards in the given deck in the inventory.
+    // Checks that the player has all the cards in the given deck in the inventory and that it 
+    // fulfills deck length constraints.
     function checkDeck(address player, uint8 deckID) external view exists(player, deckID) {
         Deck memory deck = decks[player][deckID];
 
         // Cache deck length.
         uint256 deckLength = deck.cards.length;
+
+        if (deckLength < MIN_DECK_SIZE) {
+            revert SmallDeckEnergy();
+        }
+        if (deckLength > MAX_DECK_SIZE) {
+            revert BigDeckEnergy();
+        }
 
         for (uint256 i = 0; i < deckLength; ++i) {
             uint256 cardID = deck.cards[i];
@@ -338,8 +346,6 @@ contract Inventory is Ownable {
                 prevCardType = sortedCards[i];
             }
         }
-
-        // NOTE(norswap): Deck size is implicitly checked when updating the deck.
     }
 
     // ---------------------------------------------------------------------------------------------

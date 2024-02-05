@@ -220,7 +220,7 @@ contract Inventory is Ownable {
         deckID = uint8(longDeckID);
         decks[player].push();
         decks[player][deckID] = deck;
-        
+
         emit DeckAdded(player, deckID);
     }
 
@@ -306,7 +306,7 @@ contract Inventory is Ownable {
 
     // ---------------------------------------------------------------------------------------------
 
-    // Checks that the player has all the cards in the given deck in the inventory and that it 
+    // Checks that the player has all the cards in the given deck in the inventory and that it
     // fulfills deck length constraints.
     function checkDeck(address player, uint8 deckID) external view exists(player, deckID) {
         Deck memory deck = decks[player][deckID];

@@ -4,6 +4,7 @@ import { Address } from "src/chain"
 import { deployment } from "src/deployment"
 import { inventoryABI } from "src/generated"
 import { checkFresh, freshWrap } from "src/store/checkFresh"
+import { Deck } from "src/store/types"
 
 // =================================================================================================
 
@@ -25,7 +26,7 @@ export type ModifyArgs = {
 /**
  * Saves a deck created by the player by sending the `saveDeck` transaction.
  *
- * Returns `true` iff the transaction is succesful.
+ * Returns `true` iff the transaction is successful.
  */
 export async function save(args: SaveArgs): Promise<boolean> {
   try {
@@ -38,7 +39,7 @@ export async function save(args: SaveArgs): Promise<boolean> {
 /**
  * Modifies a deck owned by the player by sending the `modifyDeck` transaction.
  *
- * Returns `true` iff the transaction is succesful.
+ * Returns `true` iff the transaction is successful.
  */
 export async function modify(args: ModifyArgs): Promise<boolean> {
   try {
@@ -51,7 +52,7 @@ export async function modify(args: ModifyArgs): Promise<boolean> {
 // -------------------------------------------------------------------------------------------------
 
 async function saveImpl(args: SaveArgs): Promise<boolean> {
-  args.deck.cards = args.deck.cards.map(card => card.id)
+  const cardBigInts = args.deck.cards.map(card => card.id)
 
   checkFresh(await freshWrap(
     contractWriteThrowing({
@@ -60,7 +61,7 @@ async function saveImpl(args: SaveArgs): Promise<boolean> {
       functionName: "addDeck",
       args: [
         args.playerAddress,
-        args.deck
+        { name: args.deck.name, cards: cardBigInts }
       ],
     })))
 
@@ -69,7 +70,7 @@ async function saveImpl(args: SaveArgs): Promise<boolean> {
 }
 
 async function modifyImpl(args: ModifyArgs): Promise<boolean> {
-  args.deck.cards = args.deck.cards.map(card => card.id)
+  const cardBigInts = args.deck.cards.map(card => card.id)
 
   checkFresh(await freshWrap(
     contractWriteThrowing({
@@ -79,7 +80,7 @@ async function modifyImpl(args: ModifyArgs): Promise<boolean> {
       args: [
         args.playerAddress,
         args.index,
-        args.deck
+        { name: args.deck.name, cards: cardBigInts }
       ],
     })))
 

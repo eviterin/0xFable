@@ -16,14 +16,14 @@ export type getAllDecksArgs = {
 /**
  * Fetches all decks of the given player by sending the `getAllDecks` transaction.
  *
- * Returns `decks` iff the transaction is successful.
- * Else, returns null.
+ * Returns `true` iff the transaction is successful.
  */
-export async function getAllDecks(args: getAllDecksArgs): Promise<boolean> {
+export async function getAllDecks(args: getAllDecksArgs): Promise<any> {
   try {
     return await getAllDecksImpl(args)
   } catch (err) {
-    return defaultErrorHandling("getAllDecks", err)
+    defaultErrorHandling("getAllDecks", err)
+    return false
   }
 }
 
@@ -31,15 +31,15 @@ export async function getAllDecks(args: getAllDecksArgs): Promise<boolean> {
 
 async function getAllDecksImpl(args: getAllDecksArgs): Promise<any> {
     try {
-      const decks = await contractWriteThrowing({
+      const result = await contractWriteThrowing({
         contract: deployment.Inventory,
         abi: inventoryABI,
         functionName: "getAllDecks",
         args: [args.playerAddress],
-      })
+      }) 
 
       args.onSuccess() 
-      return decks 
+      return result 
     } catch (error) {
       console.error("Error fetching decks:", error)
       return null

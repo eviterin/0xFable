@@ -127,7 +127,7 @@ const Collection: FablePage = ({ isHydrated }) => {
   }
 
   function modifyOnchain(deck: Deck, index: number): Promise<void> {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       modify({
         playerAddress: playerAddress!,
         index,
@@ -138,7 +138,7 @@ const Collection: FablePage = ({ isHydrated }) => {
   }
 
   function saveOnchain(deck: Deck): Promise<void> {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       save({
         deck,
         playerAddress: playerAddress!,
@@ -204,13 +204,9 @@ const Collection: FablePage = ({ isHydrated }) => {
         },
       }).then(response => {
         if(!response.simulatedResult) return
-
-        const deckData = response.simulatedResult.map(deck => ({
-          name: deck.name,
-          cards: deck.cards.map(card => Number(card)) 
-        }))
+        const receivedDecks = response.simulatedResult as Deck[]
         
-        setDecks(deckData)
+        setDecks(receivedDecks)
       }).catch(error => {
         console.error("Error fetching decks:", error)
       }).finally(() => {

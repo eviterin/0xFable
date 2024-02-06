@@ -97,10 +97,11 @@ const Collection: FablePage = ({ isHydrated }) => {
     setEditingDeckIndex(deckID)
     setIsEditing(true)
 
-    // Cards from chain are just BigInts. Now they need to be converted to actual cards.
-    const cardObjects = selectedDeck.cards.map(idString => {
-      const idBigInt = BigInt(idString); // Convert string to bigint
-      return cards.find(card => card.id === idBigInt); // Find the card by ID
+    let cardObjects: Card[] = []
+    selectedDeck.cards.forEach(card => {
+      const cID = Number(card)
+      const co = cards.find(c => Number(c.id) === cID)
+      if(co) { cardObjects.push(co) }
     })
 
     setSelectedCards(cardObjects)
@@ -190,8 +191,6 @@ const Collection: FablePage = ({ isHydrated }) => {
       router.events.off('routeChangeComplete', handleRouteChange)
     }
   }, [router.events, router.query.newDeck]) 
-
-
 
   useEffect(() => {
 

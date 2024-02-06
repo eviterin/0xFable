@@ -123,6 +123,8 @@ const Collection: FablePage = ({ isHydrated }) => {
     setIsEditing(false)
     setSelectedCards([])
     navigate(router, '/collection')
+    console.log("post meme")
+    loadDecks()
   }
 
   const handleCancelEditing = () => {
@@ -192,8 +194,7 @@ const Collection: FablePage = ({ isHydrated }) => {
     }
   }, [router.events, router.query.newDeck]) 
 
-  useEffect(() => {
-
+  function loadDecks() {
     if (playerAddress) {
       setIsLoadingDecks(true)
       getAllDecks({
@@ -208,13 +209,18 @@ const Collection: FablePage = ({ isHydrated }) => {
           cards: deck.cards.map(card => card.toString()) 
         }))
 
-        setDecks(deckData);
+        setDecks(deckData)
       }).catch(error => {
         console.error("Error fetching decks:", error)
       }).finally(() => {
         setIsLoadingDecks(false)
       })
     }
+  }
+
+  useEffect(() => {
+    console.log("postpost meme")
+    loadDecks()
   }, [playerAddress, setIsLoadingDecks])
   
   return (

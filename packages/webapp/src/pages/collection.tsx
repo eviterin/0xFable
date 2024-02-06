@@ -1,7 +1,7 @@
 import debounce from "lodash/debounce"
 import Head from "next/head"
 
-import { useState, useMemo, useEffect } from "react"
+import { useState, useMemo, useEffect,  useCallback } from "react"
 import { useAccount } from "wagmi"
 
 import jotaiDebug from "src/components/lib/jotaiDebug"
@@ -97,7 +97,7 @@ const Collection: FablePage = ({ isHydrated }) => {
     setEditingDeckIndex(deckID)
     setIsEditing(true)
 
-    let cardObjects: Card[] = []
+    const cardObjects: Card[] = []
     selectedDeck.cards.forEach(card => {
       const cID = Number(card)
       const co = cards.find(c => Number(c.id) === cID)
@@ -193,7 +193,7 @@ const Collection: FablePage = ({ isHydrated }) => {
     }
   }, [router.events, router.query.newDeck]) 
 
-  function loadDecks() {
+  const loadDecks = useCallback(() => {
     if (playerAddress) {
       setIsLoadingDecks(true)
       getAllDecks({
@@ -215,12 +215,12 @@ const Collection: FablePage = ({ isHydrated }) => {
         setIsLoadingDecks(false)
       })
     }
-  }
+  }, [playerAddress, setIsLoadingDecks])
 
   useEffect(() => {
     loadDecks()
-  }, [playerAddress, setIsLoadingDecks])
-  
+  }, [loadDecks])
+
   return (
     <>
       <Head>

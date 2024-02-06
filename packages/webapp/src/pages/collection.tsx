@@ -143,7 +143,7 @@ const Collection: FablePage = ({ isHydrated }) => {
         deck,
         playerAddress: playerAddress!,
         onSuccess: () => { resolve() }
-        })
+      })
     })
   }
 
@@ -210,7 +210,6 @@ const Collection: FablePage = ({ isHydrated }) => {
           cards: deck.cards.map(card => Number(card)) 
         }))
         
-        console.log(deckData)
         setDecks(deckData)
       }).catch(error => {
         console.error("Error fetching decks:", error)

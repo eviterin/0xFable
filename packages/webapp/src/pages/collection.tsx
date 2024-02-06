@@ -107,15 +107,15 @@ const Collection: FablePage = ({ isHydrated }) => {
     setSelectedCards(cardObjects)
   }
 
-  const handleSaveDeck = (updatedDeck: Deck) => {
+  const handleSaveDeck = async (updatedDeck: Deck) => {
     const updatedDecks = [...decks]
     if (editingDeckIndex !== null) {
       // Update existing deck
-      modifyOnchain(updatedDeck, editingDeckIndex)
+      await modifyOnchain(updatedDeck, editingDeckIndex)
       updatedDecks[editingDeckIndex] = updatedDeck
     } else {
       // Add the new deck to the list
-      saveOnchain(updatedDeck)
+      await saveOnchain(updatedDeck)
       updatedDecks.push(updatedDeck)
     }
   
@@ -124,6 +124,27 @@ const Collection: FablePage = ({ isHydrated }) => {
     setSelectedCards([])
     navigate(router, '/collection')
     loadDecks()
+  }
+
+  function modifyOnchain(deck: Deck, index: number): Promise<void> {
+    return new Promise((resolve, reject) => {
+      modify({
+        playerAddress: playerAddress!,
+        index,
+        deck,
+        onSuccess: () => { resolve() }
+      })
+    })
+  }
+
+  function saveOnchain(deck: Deck): Promise<void> {
+    return new Promise((resolve, reject) => {
+      save({
+        deck,
+        playerAddress: playerAddress!,
+        onSuccess: () => { resolve() }
+        })
+    })
   }
 
   const handleCancelEditing = () => {
@@ -140,25 +161,6 @@ const Collection: FablePage = ({ isHydrated }) => {
         return prevSelectedCards.filter(selectedCard => selectedCard.id !== card.id)
       } else {
         return [...prevSelectedCards, card]
-      }
-    })
-  }
-
-  function modifyOnchain(deck: Deck, index: number){
-    modify({
-      playerAddress: playerAddress!,
-      index,
-      deck,
-      onSuccess: () => { 
-      }
-    })
-  }
-
-  function saveOnchain(deck: Deck){
-    save({
-      deck,
-      playerAddress: playerAddress!,
-      onSuccess: () => { 
       }
     })
   }
@@ -205,9 +207,10 @@ const Collection: FablePage = ({ isHydrated }) => {
 
         const deckData = response.simulatedResult.map(deck => ({
           name: deck.name,
-          cards: deck.cards.map(card => card.toString()) 
+          cards: deck.cards.map(card => Number(card)) 
         }))
-
+        
+        console.log(deckData)
         setDecks(deckData)
       }).catch(error => {
         console.error("Error fetching decks:", error)

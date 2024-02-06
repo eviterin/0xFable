@@ -17,7 +17,7 @@ interface DeckConstructionPanelProps {
 
     const [ deckName, setDeckName ] = useState(deck.name)
     const [ isDeckNameValid, setIsDeckNameValid ] = useState(true)
-    
+    const [ isSaving, setIsSaving ] = useState(false)
 
     const handleDeckNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
       const newName = event.target.value
@@ -32,6 +32,7 @@ interface DeckConstructionPanelProps {
         setIsDeckNameValid(false)
         return
       }
+      setIsSaving(true)
 
       const newDeck = {
         name: deckName.trim(),
@@ -57,7 +58,7 @@ interface DeckConstructionPanelProps {
         {/* Save and Cancel Buttons */}
         <div className="flex justify-center">
           <button onClick={handleSave} className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-3 rounded-l-md">
-            ✓
+            {isSaving ? '⌛' : '✓'}
           </button>
           <button onClick={onCancel} className="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-3 rounded-r-md">
             ✕
@@ -88,7 +89,9 @@ interface DeckConstructionPanelProps {
           <div 
             key={index} 
             className="p-2 border-b last:border-b-0 cursor-pointer hover:bg-gray-100"
-            onClick={() => onCardSelect(card)}
+            onClick={() => {
+              if(!isSaving) onCardSelect(card)
+            }}
           >
             <div className="flex items-center space-x-3">
               {/* todo @eviterin: get proper link to the card instead of always the witch */}

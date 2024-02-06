@@ -123,7 +123,6 @@ const Collection: FablePage = ({ isHydrated }) => {
     setIsEditing(false)
     setSelectedCards([])
     navigate(router, '/collection')
-    console.log("post meme")
     loadDecks()
   }
 
@@ -219,7 +218,6 @@ const Collection: FablePage = ({ isHydrated }) => {
   }
 
   useEffect(() => {
-    console.log("postpost meme")
     loadDecks()
   }, [playerAddress, setIsLoadingDecks])
   
